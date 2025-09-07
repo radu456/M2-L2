@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cum Arată și Cum Se Comportă - Joc Interactiv</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF6B6B">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: bounceIn 1s ease-out;
+        }
+
+        .header h1 {
+            color: #FF6B6B;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .game-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .game-title {
+            color: #4ECDC4;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #4ECDC4;
+            padding-bottom: 10px;
+        }
+
+        .story-box {
+            background: linear-gradient(135deg, #FFE066, #FF6B6B);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            color: white;
+            font-size: 1.1em;
+            line-height: 1.6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .question {
+            background: #F8F9FA;
+            border-left: 5px solid #4ECDC4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .option-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        .option-btn.incorrect {
+            background: linear-gradient(135deg, #FF6B6B, #EE5A52);
+            animation: shake 0.6s ease-in-out;
+        }
+
+        .yes-no-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+        }
+
+        .no-btn {
+            background: linear-gradient(135deg, #FF6B6B, #EE5A52);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .feedback.correct {
+            background: #D4EDDA;
+            color: #155724;
+            border: 2px solid #4ECDC4;
+        }
+
+        .feedback.incorrect {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 2px solid #FF6B6B;
+        }
+
+        .score-board {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        .score-correct {
+            color: #4ECDC4;
+        }
+
+        .score-incorrect {
+            color: #FF6B6B;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #FFE066, #FF6B6B);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #E0E0E0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .association-table {
+            background: #F8F9FA;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .association-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .word {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .type-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .type-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-btn.physical {
+            background: #FFE066;
+            color: #333;
+        }
+
+        .type-btn.character {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .type-btn.selected {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 2000;
+            animation: bounceIn 1s ease-out;
+        }
+
+        .celebration h2 {
+            color: #4ECDC4;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .celebration p {
+            font-size: 1.3em;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .score-board {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .yes-no-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="score-board">
+        <div>Corecte: <span class="score-correct" id="correctScore">0</span></div>
+        <div>Greșite: <span class="score-incorrect" id="incorrectScore">0</span></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎭 Cum Arată și Cum Se Comportă!</h1>
+            <p>Descoperă secretele personajelor</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Secțiunea 1: Povestea cu Andrei -->
+        <div class="game-section" id="section1">
+            <h2 class="game-title">📖 Andrei și pădurea tăcută</h2>
+            <div class="story-box">
+                <p>Andrei era un băiat de doisprezece ani, cu părul negru, mereu ciufulit, și ochii mari, căprui, care păreau că observă totul. 👦</p>
+                <p>Purta mereu o geacă albastră cu buzunare adânci, pline de pietricele sau frunze uscate, pe care le colecționa. Era înalt pentru vârsta lui, dar mergea mereu încet, cu pași mici, ca să nu deranjeze natura. 🧥</p>
+                <p>Era un copil tăcut, dar curios. În fiecare duminică dimineața, pleca singur în pădurea de lângă sat. Nu se temea de liniște, ba chiar îi plăcea. 🌲</p>
+                <p>Se așeza adesea sub un copac și asculta. Dacă vedea un arici sau o veveriță, nu se apropia, doar îi privea cu răbdare. 🦔</p>
+                <p>Odată, a găsit un pui de pasăre căzut din cuib. Nu l-a atins, dar a stat lângă el până a venit mama pasăre. Apoi a plecat fără zgomot, cu zâmbetul lui blând. 🐦</p>
+            </div>
+
+            <div class="question">
+                ❓ Are Andrei părul blond?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn no-btn" onclick="selectYesNo(1, 'Nu', this)">Nu ❌</button>
+                <button class="option-btn yes-btn" onclick="selectYesNo(1, 'Nu', this)">Da ✅</button>
+            </div>
+            <div id="feedback1" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next1" onclick="nextSection(2)">Următoarea întrebare! 🚀</button>
+        </div>
+
+        <!-- Secțiunea 2: Este Andrei liniștit? -->
+        <div class="game-section hidden" id="section2">
+            <h2 class="game-title">🤫 Personalitatea lui Andrei</h2>
+            
+            <div class="question">
+                ❓ Este Andrei un copil liniștit?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn yes-btn" onclick="selectYesNo(2, 'Da', this)">Da ✅</button>
+                <button class="option-btn no-btn" onclick="selectYesNo(2, 'Da', this)">Nu ❌</button>
+            </div>
+            <div id="feedback2" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next2" onclick="nextSection(3)">Următoarea întrebare! 🎪</button>
+        </div>
+
+        <!-- Secțiunea 3: Geaca albastră -->
+        <div class="game-section hidden" id="section3">
+            <h2 class="game-title">👕 Cum se îmbracă Andrei</h2>
+            
+            <div class="question">
+                ❓ Poartă Andrei o geacă albastră?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn yes-btn" onclick="selectYesNo(3, 'Da', this)">Da ✅</button>
+                <button class="option-btn no-btn" onclick="selectYesNo(3, 'Da', this)">Nu ❌</button>
+            </div>
+            <div id="feedback3" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next3" onclick="nextSection(4)">Următoarea întrebare! 🌟</button>
+        </div>
+
+        <!-- Secțiunea 4: Merge repede? -->
+        <div class="game-section hidden" id="section4">
+            <h2 class="game-title">🚶‍♂️ Cum se mișcă Andrei</h2>
+            
+            <div class="question">
+                ❓ Merge Andrei repede prin pădure?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn no-btn" onclick="selectYesNo(4, 'Nu', this)">Nu ❌</button>
+                <button class="option-btn yes-btn" onclick="selectYesNo(4, 'Nu', this)">Da ✅</button>
+            </div>
+            <div id="feedback4" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next4" onclick="nextSection(5)">Următoarea întrebare! 🎯</button>
+        </div>
+
+        <!-- Secțiunea 5: Se teme de animale? -->
+        <div class="game-section hidden" id="section5">
+            <h2 class="game-title">🐿️ Andrei și animalele</h2>
+            
+            <div class="question">
+                ❓ Se teme Andrei de animale?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn no-btn" onclick="selectYesNo(5, 'Nu', this)">Nu ❌</button>
+                <button class="option-btn yes-btn" onclick="selectYesNo(5, 'Nu', this)">Da ✅</button>
+            </div>
+            <div id="feedback5" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next5" onclick="nextSection(6)">Următoarea întrebare! 📖</button>
+        </div>
+
+        <!-- Secțiunea 6: Colecționează? -->
+        <div class="game-section hidden" id="section6">
+            <h2 class="game-title">🍃 Hobby-urile lui Andrei</h2>
+            
+            <div class="question">
+                ❓ Colecționează Andrei frunze și pietre?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn yes-btn" onclick="selectYesNo(6, 'Da', this)">Da ✅</button>
+                <button class="option-btn no-btn" onclick="selectYesNo(6, 'Da', this)">Nu ❌</button>
+            </div>
+            <div id="feedback6" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next6" onclick="nextSection(7)">Următoarea întrebare! 🎤</button>
+        </div>
+
+        <!-- Secțiunea 7: Vorbește mult? -->
+        <div class="game-section hidden" id="section7">
+            <h2 class="game-title">🗣️ Andrei și comunicarea</h2>
+            
+            <div class="question">
+                ❓ Vorbește Andrei mult cu oamenii?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn no-btn" onclick="selectYesNo(7, 'Nu', this)">Nu ❌</button>
+                <button class="option-btn yes-btn" onclick="selectYesNo(7, 'Nu', this)">Da ✅</button>
+            </div>
+            <div id="feedback7" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next7" onclick="nextSection(8)">Următoarea întrebare! 🐦</button>
+        </div>
+
+        <!-- Secțiunea 8: A salvat puiul? -->
+        <div class="game-section hidden" id="section8">
+            <h2 class="game-title">🐦 Andrei și puiul de pasăre</h2>
+            
+            <div class="question">
+                ❓ A salvat Andrei un pui de pasăre?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn no-btn" onclick="selectYesNo(8, 'Nu', this)">Nu ❌</button>
+                <button class="option-btn yes-btn" onclick="selectYesNo(8, 'Nu', this)">Da ✅</button>
+            </div>
+            <div id="feedback8" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next8" onclick="nextSection(9)">Următoarea întrebare! 🎵</button>
+        </div>
+
+        <!-- Secțiunea 9: Îi place natura? -->
+        <div class="game-section hidden" id="section9">
+            <h2 class="game-title">🌿 Andrei și natura</h2>
+            
+            <div class="question">
+                ❓ Îi place lui Andrei să asculte natura?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn yes-btn" onclick="selectYesNo(9, 'Da', this)">Da ✅</button>
+                <button class="option-btn no-btn" onclick="selectYesNo(9, 'Da', this)">Nu ❌</button>
+            </div>
+            <div id="feedback9" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next9" onclick="nextSection(10)">Ultima întrebare! 🏃‍♂️</button>
+        </div>
+
+        <!-- Secțiunea 10: Fuge de animale? -->
+        <div class="game-section hidden" id="section10">
+            <h2 class="game-title">🏃‍♂️ Reacția lui Andrei</h2>
+            
+            <div class="question">
+                ❓ Fuge Andrei când vede animale mici?
+            </div>
+            <div class="yes-no-buttons">
+                <button class="option-btn no-btn" onclick="selectYesNo(10, 'Nu', this)">Nu ❌</button>
+                <button class="option-btn yes-btn" onclick="selectYesNo(10, 'Nu', this)">Da ✅</button>
+            </div>
+            <div id="feedback10" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next10" onclick="nextSection(11)">Jocul de asociere! 🧩</button>
+        </div>
+
+        <!-- Secțiunea 11: Jocul de asociere -->
+        <div class="game-section hidden" id="section11">
+            <h2 class="game-title">🧩 Asociază corect: Fizic sau Caracter?</h2>
+            
+            <div class="association-table">
+                <div class="association-item">
+                    <span class="word">înalt</span>
+                    <div class="type-buttons">
+                        <button class="type-btn physical" onclick="selectType(11, 'fizic', this, 'înalt')">Fizic</button>
+                        <button class="type-btn character" onclick="selectType(11, 'fizic', this, 'înalt')">Caracter</button>
+                    </div>
+                </div>
+                <div class="association-item">
+                    <span class="word">generos</span>
+                    <div class="type-buttons">
+                        <button class="type-btn physical" onclick="selectType(11, 'caracter', this, 'generos')">Fizic</button>
+                        <button class="type-btn character" onclick="selectType(11, 'caracter', this, 'generos')">Caracter</button>
+                    </div>
+                </div>
+                <div class="association-item">
+                    <span class="word">brunet</span>
+                    <div class="type-buttons">
+                        <button class="type-btn physical" onclick="selectType(11, 'fizic', this, 'brunet')">Fizic</button>
+                        <button class="type-btn character" onclick="selectType(11, 'fizic', this, 'brunet')">Caracter</button>
+                    </div>
+                </div>
+            </div>
+            <div id="feedback11" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next11" onclick="nextSection(12)">Personajul pozitiv! 😊</button>
+        </div>
+
+        <!-- Secțiunea 12: Mara - Generozitate -->
+        <div class="game-section hidden" id="section12">
+            <h2 class="game-title">😊 Mara - Personajul pozitiv</h2>
+            
+            <div class="story-box">
+                <p>Mara este o fată de 10 ani. Îi place să îi ajute pe colegii care nu înțeleg temele, își face mereu temele la timp, nu se ceartă niciodată și îi vorbește frumos chiar și celor care o necăjesc. 📚</p>
+                <p>În timpul liber, îngrijește pisicile fără stăpân din cartier. 🐱</p>
+            </div>
+
+            <div class="question">
+                ❓ Ce calitate arată faptul că Mara îi ajută pe colegii ei?
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(12, 'b', this)">a) Lenevie</button>
+                <button class="option-btn" onclick="selectAnswer(12, 'b', this)">b) Generozitate ✅</button>
+                <button class="option-btn" onclick="selectAnswer(12, 'b', this)">c) Răutate</button>
+                <button class="option-btn" onclick="selectAnswer(12, 'b', this)">d) Mândrie</button>
+            </div>
+            <div id="feedback12" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next12" onclick="nextSection(13)">Următoarea calitate! 📝</button>
+        </div>
+
+        <!-- Secțiunea 13: Mara - Responsabilitate -->
+        <div class="game-section hidden" id="section13">
+            <h2 class="game-title">📝 Mara și responsabilitatea</h2>
+            
+            <div class="question">
+                ❓ Dacă Mara își face mereu temele la timp, înseamnă că este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(13, 'c', this)">a) Neascultătoare</button>
+                <button class="option-btn" onclick="selectAnswer(13, 'c', this)">b) Zgârcită</button>
+                <button class="option-btn" onclick="selectAnswer(13, 'c', this)">c) Responsabilă ✅</button>
+                <button class="option-btn" onclick="selectAnswer(13, 'c', this)">d) Curioasă</button>
+            </div>
+            <div id="feedback13" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next13" onclick="nextSection(14)">Următoarea calitate! 😌</button>
+        </div>
+
+        <!-- Secțiunea 14: Mara - Calm -->
+        <div class="game-section hidden" id="section14">
+            <h2 class="game-title">😌 Mara și calmul</h2>
+            
+            <div class="question">
+                ❓ Vorbind frumos cu toți, chiar și cu cei care o necăjesc, Mara dovedește că este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(14, 'b', this)">a) Răzbunătoare</button>
+                <button class="option-btn" onclick="selectAnswer(14, 'b', this)">b) Calmă ✅</button>
+                <button class="option-btn" onclick="selectAnswer(14, 'b', this)">c) Încăpățânată</button>
+                <button class="option-btn" onclick="selectAnswer(14, 'b', this)">d) Nepăsătoare</button>
+            </div>
+            <div id="feedback14" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next14" onclick="nextSection(15)">Următoarea calitate! 🐱</button>
+        </div>
+
+        <!-- Secțiunea 15: Mara - Milostivă -->
+        <div class="game-section hidden" id="section15">
+            <h2 class="game-title">🐱 Mara și compasiunea</h2>
+            
+            <div class="question">
+                ❓ Îngrijind pisicile fără stăpân, Mara dovedește că este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(15, 'a', this)">a) Milostivă ✅</button>
+                <button class="option-btn" onclick="selectAnswer(15, 'a', this)">b) Supărăcioasă</button>
+                <button class="option-btn" onclick="selectAnswer(15, 'a', this)">c) Egoistă</button>
+                <button class="option-btn" onclick="selectAnswer(15, 'a', this)">d) Plictisită</button>
+            </div>
+            <div id="feedback15" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next15" onclick="nextSection(16)">Ultima despre Mara! 😇</button>
+        </div>
+
+        <!-- Secțiunea 16: Mara - Cuminte -->
+        <div class="game-section hidden" id="section16">
+            <h2 class="game-title">😇 Mara și comportamentul</h2>
+            
+            <div class="question">
+                ❓ Dacă nu se ceartă niciodată, putem spune că Mara este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(16, 'b', this)">a) Geloasă</button>
+                <button class="option-btn" onclick="selectAnswer(16, 'b', this)">b) Cuminte ✅</button>
+                <button class="option-btn" onclick="selectAnswer(16, 'b', this)">c) Vorbăreață</button>
+                <button class="option-btn" onclick="selectAnswer(16, 'b', this)">d) Zgomotoasă</button>
+            </div>
+            <div id="feedback16" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next16" onclick="nextSection(17)">Personajul negativ! 😠</button>
+        </div>
+
+        <!-- Secțiunea 17: Radu - Egoist -->
+        <div class="game-section hidden" id="section17">
+            <h2 class="game-title">😠 Radu - Personajul negativ</h2>
+            
+            <div class="story-box">
+                <p>Radu are 11 ani. Nu vrea niciodată să lucreze în echipă, râde de greșelile altora și deseori întrerupe ora cu glume nepotrivite. 😤</p>
+                <p>Își lasă mereu temele nefăcute și dă vina pe alții când greșește. Când nu-i convine ceva, ridică tonul și trântește lucruri. 😡</p>
+            </div>
+
+            <div class="question">
+                ❓ Dacă Radu nu vrea să lucreze cu alții, înseamnă că este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(17, 'c', this)">a) Prietenos</button>
+                <button class="option-btn" onclick="selectAnswer(17, 'c', this)">b) Curajos</button>
+                <button class="option-btn" onclick="selectAnswer(17, 'c', this)">c) Egoist ✅</button>
+                <button class="option-btn" onclick="selectAnswer(17, 'c', this)">d) Generos</button>
+            </div>
+            <div id="feedback17" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next17" onclick="nextSection(18)">Următorul defect! 😈</button>
+        </div>
+
+        <!-- Secțiunea 18: Radu - Răutăcios -->
+        <div class="game-section hidden" id="section18">
+            <h2 class="game-title">😈 Radu și răutatea</h2>
+            
+            <div class="question">
+                ❓ Râzând de greșelile altora, Radu dovedește că este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(18, 'a', this)">a) Răutăcios ✅</button>
+                <button class="option-btn" onclick="selectAnswer(18, 'a', this)">b) Amuzant</button>
+                <button class="option-btn" onclick="selectAnswer(18, 'a', this)">c) Sincer</button>
+                <button class="option-btn" onclick="selectAnswer(18, 'a', this)">d) Drăguț</button>
+            </div>
+            <div id="feedback18" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next18" onclick="nextSection(19)">Următorul defect! 😴</button>
+        </div>
+
+        <!-- Secțiunea 19: Radu - Leneș -->
+        <div class="game-section hidden" id="section19">
+            <h2 class="game-title">😴 Radu și lenea</h2>
+            
+            <div class="question">
+                ❓ Când nu își face temele, Radu este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(19, 'd', this)">a) Responsabil</button>
+                <button class="option-btn" onclick="selectAnswer(19, 'd', this)">b) Neîngrijit</button>
+                <button class="option-btn" onclick="selectAnswer(19, 'd', this)">c) Serios</button>
+                <button class="option-btn" onclick="selectAnswer(19, 'd', this)">d) Leneș ✅</button>
+            </div>
+            <div id="feedback19" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next19" onclick="nextSection(20)">Următorul defect! 🤥</button>
+        </div>
+
+        <!-- Secțiunea 20: Radu - Necinstit -->
+        <div class="game-section hidden" id="section20">
+            <h2 class="game-title">🤥 Radu și necinstitea</h2>
+            
+            <div class="question">
+                ❓ Dacă dă vina pe alții pentru greșelile lui, putem spune că Radu este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(20, 'b', this)">a) Curajos</button>
+                <button class="option-btn" onclick="selectAnswer(20, 'b', this)">b) Necinstit ✅</button>
+                <button class="option-btn" onclick="selectAnswer(20, 'b', this)">c) Înțelept</button>
+                <button class="option-btn" onclick="selectAnswer(20, 'b', this)">d) Amabil</button>
+            </div>
+            <div id="feedback20" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next20" onclick="nextSection(21)">Ultimul defect! 😤</button>
+        </div>
+
+        <!-- Secțiunea 21: Radu - Nervos -->
+        <div class="game-section hidden" id="section21">
+            <h2 class="game-title">😤 Radu și nervozitatea</h2>
+            
+            <div class="question">
+                ❓ Când se enervează și trântește lucruri, Radu este:
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectAnswer(21, 'c', this)">a) Răbdător</button>
+                <button class="option-btn" onclick="selectAnswer(21, 'c', this)">b) Calm</button>
+                <button class="option-btn" onclick="selectAnswer(21, 'c', this)">c) Nervos ✅</button>
+                <button class="option-btn" onclick="selectAnswer(21, 'c', this)">d) Politicos</button>
+            </div>
+            <div id="feedback21" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next21" onclick="nextSection(22)">Descoperă-ți portretul! 🎨</button>
+        </div>
+
+        <!-- Secțiunea 22: Jocul "Descoperă-ți portretul" - Prima întrebare -->
+        <div class="game-section hidden" id="section22">
+            <h2 class="game-title">🎨 Descoperă-ți portretul!</h2>
+            
+            <div class="story-box">
+                <p>Acum e timpul să te cunoști pe tine! Toate răspunsurile sunt corecte - alege ce te descrie cel mai bine! 😊</p>
+            </div>
+
+            <div class="question">
+                ❓ Cum e părul tău?
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectPortrait(22, this)">a) Lung și drept</button>
+                <button class="option-btn" onclick="selectPortrait(22, this)">b) Scurt și creț</button>
+                <button class="option-btn" onclick="selectPortrait(22, this)">c) Mediu și ondulat</button>
+                <button class="option-btn" onclick="selectPortrait(22, this)">d) Altceva</button>
+            </div>
+            <div id="feedback22" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next22" onclick="nextSection(23)">Următoarea întrebare! 👀</button>
+        </div>
+
+        <!-- Secțiunea 23: Ochii -->
+        <div class="game-section hidden" id="section23">
+            <h2 class="game-title">👀 Culoarea ochilor</h2>
+            
+            <div class="question">
+                ❓ Ce culoare au ochii tăi?
+            </div>
+            <div class="options">
+                <button class="option-btn" onclick="selectPortrait(23, this)">a) Căprui</button>
+                <button class="option-btn" onclick="selectPortrait(23, this)">b) Albaștri</button>
+                <button class="option-btn" onclick="selectPortrait(23, this)">c) Verzi</button>
+                <button class="option-btn" onclick="selectPortrait(23, this)">d) Altă culoare</button>
+            </div>
+            <div id="feedback23" class="feedback hidden"></div>
+            <button class="next-btn hidden" id="next23" onclick="showFinalResults()">Vezi rezultatele finale! 🏆</button>
+        </div>
+
+        <!-- Rezultate finale -->
+        <div class="game-section hidden" id="finalResults">
+            <h2 class="game-title">🎉 Felicitări!</h2>
+            <div class="celebration">
+                <h2>🏆 Ai terminat aventura!</h2>
+                <p id="finalScore"></p>
+                <button class="next-btn" onclick="restartGame()">Joacă din nou! 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let currentSection = 1;
+        let totalSections = 23;
+        let answered = {};
+        let associationAnswers = {};
+        let associationTotal = 3;
+        let associationCorrect = 0;
+
+        function updateScore() {
+            document.getElementById('correctScore').textContent = correctAnswers;
+            document.getElementById('incorrectScore').textContent = incorrectAnswers;
+            
+            const progress = (currentSection - 1) / totalSections * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function selectYesNo(sectionId, correctAnswer, button) {
+            if (answered[sectionId]) return;
+            
+            answered[sectionId] = true;
+            const selectedAnswer = button.textContent.includes('Da') ? 'Da' : 'Nu';
+            const isCorrect = selectedAnswer === correctAnswer;
+            
+            // Disable all buttons in this section
+            const allButtons = button.parentElement.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                if ((btn.textContent.includes('Da') && correctAnswer === 'Da') || 
+                    (btn.textContent.includes('Nu') && correctAnswer === 'Nu')) {
+                    btn.classList.add('correct');
+                } else if (btn === button && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            showFeedback(sectionId, isCorrect);
+        }
+
+        function selectAnswer(sectionId, correctAnswer, button) {
+            if (answered[sectionId]) return;
+            
+            answered[sectionId] = true;
+            const selectedAnswer = button.textContent.charAt(0);
+            const isCorrect = selectedAnswer === correctAnswer;
+            
+            // Disable all buttons in this section
+            const allButtons = button.parentElement.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.charAt(0) === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn === button && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            showFeedback(sectionId, isCorrect);
+        }
+
+        function selectType(sectionId, correctType, button, word) {
+            const item = button.closest('.association-item');
+            const buttons = item.querySelectorAll('.type-btn');
+            
+            // Remove previous selection
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            const selectedType = button.textContent.toLowerCase() === 'fizic' ? 'fizic' : 'caracter';
+            associationAnswers[word] = selectedType;
+            
+            // Check if all associations are completed
+            if (Object.keys(associationAnswers).length === associationTotal) {
+                let correct = 0;
+                if (associationAnswers['înalt'] === 'fizic') correct++;
+                if (associationAnswers['generos'] === 'caracter') correct++;
+                if (associationAnswers['brunet'] === 'fizic') correct++;
+                
+                associationCorrect = correct;
+                const isAllCorrect = correct === associationTotal;
+                
+                if (isAllCorrect) {
+                    correctAnswers++;
+                } else {
+                    incorrectAnswers++;
+                }
+                
+                showFeedback(sectionId, isAllCorrect);
+                updateScore();
+            }
+        }
+
+        function selectPortrait(sectionId, button) {
+            if (answered[sectionId]) return;
+            
+            answered[sectionId] = true;
+            
+            // Disable all buttons in this section
+            const allButtons = button.parentElement.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('correct'); // All answers are correct for portrait
+            });
+
+            correctAnswers++;
+            showFeedback(sectionId, true, "🎨 Perfect! Toate răspunsurile sunt corecte în jocul portretului!");
+        }
+
+        function showFeedback(sectionId, isCorrect, customMessage = null) {
+            const feedback = document.getElementById('feedback' + sectionId);
+            feedback.classList.remove('hidden');
+            
+            if (isCorrect) {
+                if (!customMessage && sectionId !== 11) correctAnswers++;
+                feedback.textContent = customMessage || '🎉 Bravo! Răspuns corect!';
+                feedback.classList.add('correct');
+                playSound('correct');
+            } else {
+                if (sectionId !== 11) incorrectAnswers++;
+                if (sectionId === 11) {
+                    feedback.textContent = `😊 Ai ${associationCorrect} din ${associationTotal} corecte! Încearcă să te gândești mai bine!`;
+                } else {
+                    feedback.textContent = '😊 Nu-i nimic! Încearcă să te gândești mai bine data viitoare!';
+                }
+                feedback.classList.add('incorrect');
+                playSound('incorrect');
+            }
+
+            if (sectionId !== 11) updateScore();
+            
+            // Show next button
+            document.getElementById('next' + sectionId).classList.remove('hidden');
+        }
+
+        function nextSection(nextId) {
+            document.getElementById('section' + currentSection).classList.add('hidden');
+            document.getElementById('section' + nextId).classList.remove('hidden');
+            currentSection = nextId;
+            updateScore();
+        }
+
+        function showFinalResults() {
+            document.getElementById('section' + currentSection).classList.add('hidden');
+            document.getElementById('finalResults').classList.remove('hidden');
+            
+            const totalQuestions = correctAnswers + incorrectAnswers;
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            let message = '';
+            if (percentage >= 80) {
+                message = `🌟 Fantastic! Ai răspuns corect la ${correctAnswers} din ${totalQuestions} întrebări (${percentage}%)! Ești un adevărat expert în personaje!`;
+            } else if (percentage >= 60) {
+                message = `👏 Foarte bine! Ai răspuns corect la ${correctAnswers} din ${totalQuestions} întrebări (${percentage}%)! Continuă să exersezi!`;
+            } else {
+                message = `💪 Bun început! Ai răspuns corect la ${correctAnswers} din ${totalQuestions} întrebări (${percentage}%)! Cu puțin exercițiu vei fi și mai bun!`;
+            }
+            
+            document.getElementById('finalScore').textContent = message;
+        }
+
+        function restartGame() {
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            currentSection = 1;
+            answered = {};
+            associationAnswers = {};
+            associationCorrect = 0;
+            
+            // Reset all sections
+            for (let i = 1; i <= 23; i++) {
+                document.getElementById('section' + i).classList.add('hidden');
+                const buttons = document.querySelectorAll('#section' + i + ' .option-btn, #section' + i + ' .type-btn');
+                buttons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.classList.remove('correct', 'incorrect', 'selected');
+                });
+                
+                const feedback = document.getElementById('feedback' + i);
+                feedback.classList.add('hidden');
+                feedback.classList.remove('correct', 'incorrect');
+                
+                const nextBtn = document.getElementById('next' + i);
+                if (nextBtn) nextBtn.classList.add('hidden');
+            }
+            
+            document.getElementById('finalResults').classList.add('hidden');
+            document.getElementById('section1').classList.remove('hidden');
+            updateScore();
+        }
+
+        function playSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                if (type === 'correct') {
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                } else {
+                    oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // A3
+                    oscillator.frequency.setValueAtTime(196, audioContext.currentTime + 0.1); // G3
+                }
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        // Initialize the game
+        updateScore();
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => console.log('SW registered'))
+                .catch(error => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
+
